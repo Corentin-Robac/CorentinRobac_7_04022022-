@@ -64,7 +64,7 @@
     export default {
         props: {
             post: Object
-            },
+        },
         // Utiliser les props pour récupérer les données transmises par le composant App.vue
         data: function () {
             return {
