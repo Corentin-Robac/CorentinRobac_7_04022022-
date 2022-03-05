@@ -12,8 +12,7 @@
         
         <!-- Option message / Cacher si non propriétaire du message -->
         <div v-if="this.post.userName == $store.state.currentUser" class="flex my-2">
-            <p class="mr-8 text-orange italic text-sm cursor-pointer">Supprimer</p>
-            <p class="mr-8 text-orange italic text-sm cursor-pointer">Modifier</p>
+            <p @click="deletePost()" class="mr-8 text-orange italic text-sm cursor-pointer">Supprimer</p>
         </div>
 
         <!-- Options de réponse -->
@@ -43,8 +42,7 @@
 
                 <!-- Option message / Cacher si non propriétaire du message -->
                 <div class="flex my-2" v-if="response.userName == $store.state.currentUser"> 
-                    <p class="mr-8 text-orange italic text-sm cursor-pointer">Supprimer</p>
-                    <p class="mr-8 text-orange italic text-sm cursor-pointer">Modifier</p>
+                    <p @click="deletePost()" class="mr-8 text-orange italic text-sm cursor-pointer">Supprimer</p>
                 </div>
             </div>
             <inputText></inputText>
@@ -65,11 +63,24 @@
         props: {
             post: Object
         },
-        // Utiliser les props pour récupérer les données transmises par le composant App.vue
+
         data: function () {
             return {
                 seeResponses: false
             }
+        },
+
+        methods: {
+            async deletePost() {
+                try {
+                // SI post.userId === $storer.state.userId ALORS
+                    // let response = await fetch("http://localhost:3000/api/deletePost"); // postId
+                // FIN SI
+                } catch (error) {
+                console.log(error);
+                }
+            },
         }
+
     }
 </script>

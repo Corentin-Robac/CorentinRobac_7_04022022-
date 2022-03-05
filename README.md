@@ -1,24 +1,24 @@
-# groupomania
+# Groupomania - Project 7 Openclassrooms Web Dev
 
-## Project setup
+## Installation
 ```
+git clone https://github.com/Corentin-Robac/CorentinRobac_7_04022022-.git Groupomania
+cd front
+npm install
+cd ../back
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Load Front
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+## Load Back
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+nodemon server
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Database
+Contact me to get database.
+Use 3306 Port.

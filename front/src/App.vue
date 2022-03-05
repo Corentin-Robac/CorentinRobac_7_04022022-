@@ -31,45 +31,27 @@
 
 <script>
     export default {
-        data: function () {
-            return {
-              posts:[
-                {
-                  userImageUrl: '../assets/profil-icon.png',
-                  userName: 'John Doe',
-                  userMessageContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vel lorem dolor. Vivamus ac est vehicula, maximus massa eu, semper dui. Proin rhoncus faucibus lorem a hendrerit. Suspendisse dignissim dapibus interdum.',
-                  responses: [
-                      {
-                          userImageUrl: '../assets/profil-icon.png',
-                          userName: 'Jeanne Ode',
-                          userMessageContent: 'Phasellus sed libero id enim bibendum tempor id eu nisl ?'
-                      },
-                      {
-                          userImageUrl: '../assets/profil-icon.png',
-                          userName: 'Jean Edo',
-                          userMessageContent: 'Libero id enim bibendum  consectetur adipiscing elit.'
-                      },
-                  ]
-                },
-                {
-                  userImageUrl: '../assets/profil-icon.png',
-                  userName: 'Jack Joe',
-                  userMessageContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vel lorem dolor. Vivamus ac est vehicula, maximus massa eu, semper dui. Proin rhoncus faucibus lorem a hendrerit. Suspendisse dignissim dapibus interdum.',
-                  responses: [
-                      {
-                          userImageUrl: '../assets/profil-icon.png',
-                          userName: 'Ole Fern',
-                          userMessageContent: 'Phasellus sed libero id enim bibendum tempor id eu nisl ?'
-                      },
-                      {
-                          userImageUrl: '../assets/profil-icon.png',
-                          userName: 'Anne Ed',
-                          userMessageContent: 'Libero id enim bibendum  consectetur adipiscing elit.'
-                      },
-                  ]
-                }
-              ],
-            }
-        }
+      
+      data: function () {
+          return {
+            posts:[],
+          }
+      },
+
+      methods: {
+        async getPostsData() {
+          try {
+            let response = await fetch("http://localhost:3000/api/posts");
+            let objectResponse = await response.json();
+            this.posts = objectResponse.posts;
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+
+      created() {
+        this.getPostsData();
+      }
     }
 </script>
