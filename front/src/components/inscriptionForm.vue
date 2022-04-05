@@ -29,26 +29,41 @@
       data: function () {
           return {
             mailAddress: "",
-            pseudo: '',
+            pseudo: "",
             password: ""
           }
       },
 
       methods: {
+        
         async getSubscribeData() {
           try {
-            // let response = await fetch("http://localhost:3000/api/subscribe"); // Envoyer mailAddress + password + pseudo
-            // let objectResponse = await response.json();
+            let response = await fetch("http://localhost:3000/api/subscribe",{
+              method: 'POST',
+              body:JSON.stringify({
+                  email: this.mailAddress,
+                  username: this.pseudo,
+                  password: this.password
+              }),
+              headers:{"content-type": "application/json"}
+            }); // Envoyer mailAddress + password + pseudo
 
-            // Si objectResponse est bon Alors 
-                // $store.state.isConnected = true;
-                // $store.state.currentUser = this.objectResponse.name;
-                // $store.state.currentPage = '';
-            // FIN ALORS
+            let objectResponse = await response.json();
+
+            if(objectResponse.message !== "Utilisateur créé"){
+              alert(objectResponse.message);
+            }else{
+              this.$store.state.isConnected = true;
+              this.$store.state.currentUser = objectResponse.name;
+              this.$store.state.currentPage = '';
+              this.$store.state.isAdmin = false;
+              this.$emit('send');
+            }
           } catch (error) {
             console.log(error);
           }
-        },
+        }
+
       }
 
     }

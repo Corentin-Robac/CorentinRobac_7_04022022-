@@ -5,14 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        isConnected: true, // Modification manuelle temporaire
+        isConnected: false, // Modification manuelle temporaire
         currentPage: 'connexionForm', // Utilisé uniquement quand l'utilisateur est déconnecté
-        currentUser: 'Jean Edo' // Modification manuelle temporaire
-    },
-    mutations: {
-       // Exemple de mutation
-        // maFonction(state, option) {
-        
-        // }
+        currentUser: '', // Modification manuelle temporaire
+        isAdmin: false
     }
-})
+});

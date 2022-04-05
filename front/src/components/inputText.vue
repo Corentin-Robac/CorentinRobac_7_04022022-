@@ -16,17 +16,41 @@
 <script>
     export default {
 
+        props: {
+            postId: {
+                type: Number,
+                required: false,
+                default: 0
+            }
+        },
+
         data: function () {
             return {
-                textEntered: ''
+                textEntered: '',
+                attachment: ''
             }
         },
 
         methods: {
             async sendPost() {
                 try {
-                // let response = await fetch("http://localhost:3000/api/sendPost"); // userId
-                // envoyer textEntered
+                    let response = await fetch("http://localhost:3000/api/sendPost",{
+                        method: 'POST',
+                        body:JSON.stringify({
+                            message: this.textEntered,
+                            attachment: this.attachment,
+                            ResponseTo: this.postId,
+                            currentUser: this.$store.state.currentUser
+                        }),
+                        headers:{"content-type": "application/json"}
+                    });
+                    let objectResponse = await response.json();
+                    if(objectResponse.message === 'Message publié'){
+                        this.$emit('send');
+                        this.textEntered = '';
+                    }else{
+                        alert(objectResponse.message);
+                    }
                 } catch (error) {
                     console.log(error);
                 }

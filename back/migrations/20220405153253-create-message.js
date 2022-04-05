@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Posts', {
+    await queryInterface.createTable('Messages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -21,11 +21,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       attachment: {
+        allowNull: true,
         type: Sequelize.STRING
       },
-      isResponse: {
+      ResponseTo: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -38,6 +39,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Posts');
+    await queryInterface.dropTable('Messages');
   }
 };

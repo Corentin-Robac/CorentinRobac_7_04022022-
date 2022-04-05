@@ -1,7 +1,7 @@
 <template>
   <nav class="flex items-center justify-between bg-white px-4">
     <div class="flex items-center flex-no-shrink mr-6">
-      <img src="../assets/icon-above-font.png" alt="Groupomania" class="h-36 object-contain cursor-pointer">
+      <img src="../assets/icon-above-font.png" alt="Groupomania" class="h-36 object-contain cursor-pointer" @click="updateCurrentPage()">
     </div>
 
     <!-- Si l'utilisateur est Déconnecté -->
@@ -17,3 +17,21 @@
 
   </nav>
 </template>
+
+
+<script>
+    export default {
+
+        methods: {
+            updateCurrentPage(){
+              if(this.$store.state.isConnected === true){
+                this.$store.state.currentPage = '';
+                this.$emit('send');
+              }else{
+                this.$store.state.currentPage = 'connexionForm';
+              }
+            }
+        }
+
+    }
+</script>

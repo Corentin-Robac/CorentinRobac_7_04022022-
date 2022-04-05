@@ -8,17 +8,21 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      mail: {
+      email: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      pseudo: {
+      username: {
         allowNull: false,
         type: Sequelize.STRING
       },
       password: {
         allowNull: false,
         type: Sequelize.STRING
+      },
+      isAdmin: {
+        allowNull: true,
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

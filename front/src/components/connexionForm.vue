@@ -32,14 +32,30 @@
       methods: {
         async getConnectData() {
           try {
-            // let response = await fetch("http://localhost:3000/api/connect");
-            // let objectResponse = await response.json(); // Envoyer mailAddress + password
+              let response = await fetch("http://localhost:3000/api/connect",{
+              method: 'POST',
+              body:JSON.stringify({
+                  email: this.mailAddress,
+                  password: this.password
+              }),
+              headers:{"content-type": "application/json"}
+            }); // Envoyer mailAddress + password
 
-            // Si objectResponse est bon Alors 
-                // $store.state.isConnected = true;
-                // $store.state.currentUser = this.objectResponse.name;
-                // $store.state.currentPage = '';
-            // FIN ALORS
+            let objectResponse = await response.json();
+
+            if(objectResponse.message !== "Bons identifiants"){
+              alert("Identifiants incorrects");
+            }else{
+              this.$store.state.isConnected = true;
+              this.$store.state.currentUser = objectResponse.name;
+              this.$store.state.currentPage = '';
+              this.$emit('send');
+            }
+            if(objectResponse.isAdmin === 1 || objectResponse.isAdmin === true){
+              this.$store.state.isAdmin = true;
+            }else{
+              this.$store.state.isAdmin = false;
+            }
           } catch (error) {
             console.log(error);
           }
