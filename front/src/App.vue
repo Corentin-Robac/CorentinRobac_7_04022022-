@@ -49,16 +49,52 @@
           if(this.$store.state.currentPage !== 'connexionForm' && this.$store.state.currentPage !== 'inscriptionForm' && this.$store.state.isConnected === true){
             try {
               let response = await fetch("http://localhost:3000/api/posts",{
-              method: 'POST',
-              body:JSON.stringify({
-                  currentPage: this.$store.state.currentPage
-              }),
-              headers:{"content-type": "application/json"}
-              });
+                method: 'POST',
+                body:JSON.stringify({
+                    currentPage: this.$store.state.currentPage,
+                    userId: this.$store.state.currentUser
+                }),
+                headers:{"content-type": "application/json", "authorization": this.$store.state.jwt}
+                });
               let posts = await response.json();
 
               this.posts = posts;
 
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        },
+
+        async getConnectLocalStorage(){
+          if(JSON.parse(localStorage.getItem('isConnected')) === true){
+            try {
+                let response = await fetch("http://localhost:3000/api/connect",{
+                method: 'POST',
+                body:JSON.stringify({
+                    email: JSON.parse(localStorage.getItem('email')),
+                    password: JSON.parse(localStorage.getItem('password'))
+                }),
+                headers:{"content-type": "application/json"}
+              }); // Envoyer mailAddress + password
+
+              let objectResponse = await response.json();
+
+              if(objectResponse.message !== "Bons identifiants"){
+                this.$store.state.currentPage = 'connexionForm';
+                alert("Identifiants incorrects");
+              }else{
+                this.$store.state.jwt = objectResponse.token;
+                this.$store.state.isConnected = true;
+                this.$store.state.currentUser = objectResponse.name;
+                this.$store.state.currentPage = '';
+                this.getPostsData();
+              }
+              if(objectResponse.isAdmin === 1 || objectResponse.isAdmin === true){
+                this.$store.state.isAdmin = true;
+              }else{
+                this.$store.state.isAdmin = false;
+              }
             } catch (error) {
               console.log(error);
             }
@@ -69,6 +105,10 @@
 
       mounted() {
         this.getPostsData();
+      },
+
+      created() {
+        this.getConnectLocalStorage();
       }
 
     }

@@ -76,9 +76,11 @@
                     let response = await fetch("http://localhost:3000/api/deletePost",{
                     method: 'DELETE',
                     body:JSON.stringify({
-                        postId: postId
+                        postId: postId,
+                        userId: this.$store.state.currentUser, 
+                        isAdmin: this.$store.state.isAdmin
                     }),
-                    headers:{"content-type": "application/json"}
+                    headers:{"content-type": "application/json", "authorization": this.$store.state.jwt}
                     });
                     let objectResponse = await response.json();
                      if(objectResponse.message === 'Message supprimé'){

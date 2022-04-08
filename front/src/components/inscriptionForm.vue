@@ -57,6 +57,10 @@
               this.$store.state.currentUser = objectResponse.name;
               this.$store.state.currentPage = '';
               this.$store.state.isAdmin = false;
+              this.$store.state.jwt = objectResponse.token;
+              localStorage.setItem('isConnected', true);
+              localStorage.setItem('email', JSON.stringify(this.mailAddress));
+              localStorage.setItem('password', JSON.stringify(this.password));
               this.$emit('send');
             }
           } catch (error) {

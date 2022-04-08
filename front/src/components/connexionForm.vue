@@ -46,9 +46,13 @@
             if(objectResponse.message !== "Bons identifiants"){
               alert("Identifiants incorrects");
             }else{
+              this.$store.state.jwt = objectResponse.token;
               this.$store.state.isConnected = true;
               this.$store.state.currentUser = objectResponse.name;
               this.$store.state.currentPage = '';
+              localStorage.setItem('isConnected', true);
+              localStorage.setItem('email', JSON.stringify(this.mailAddress));
+              localStorage.setItem('password', JSON.stringify(this.password));
               this.$emit('send');
             }
             if(objectResponse.isAdmin === 1 || objectResponse.isAdmin === true){

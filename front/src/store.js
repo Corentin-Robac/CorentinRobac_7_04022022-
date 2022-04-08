@@ -8,6 +8,7 @@ export default new Vuex.Store({
         isConnected: false, // Modification manuelle temporaire
         currentPage: 'connexionForm', // Utilisé uniquement quand l'utilisateur est déconnecté
         currentUser: '', // Modification manuelle temporaire
-        isAdmin: false
+        isAdmin: false,
+        jwt: ''
     }
 });
