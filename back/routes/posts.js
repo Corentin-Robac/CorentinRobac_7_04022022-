@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-var models = require('../models');
+const models = require('../models');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
+const fs = require("fs");
 
 router.post('/posts', auth, async (req, res, next) => {
 
@@ -108,13 +109,16 @@ router.post('/posts', auth, async (req, res, next) => {
 
 });
 
-router.post('/sendPost', auth, async (req, res, next) => {
+router.post('/sendPost', auth, multer, async (req, res, next) => {
     try {
+
         if(req.body.userId === req.auth.userId){
 
-            // console.log(`${req.protocol}://${req.get('host')}/images/${req.file.filename}`);
-            console.log(req.body.attachment);
-
+            let imgUrl = null;
+            if(req.file){
+                imgUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+            }
+            
             let response = await models.User.findOne({
                 where: {username: req.body.currentUser},
                 attributes: ['id']
@@ -123,13 +127,13 @@ router.post('/sendPost', auth, async (req, res, next) => {
             await models.Message.create({
                 idUSERS: response.id,
                 content: req.body.message,
-                attachment: req.body.attachment,
+                attachment: imgUrl,
                 ResponseTo: req.body.ResponseTo
             });
 
             res.status(201).json({
                 message: 'Message publié',
-                imageUrl: ''
+                imageUrl: imgUrl
             });
         }else {
             res.status(401).json({
@@ -142,29 +146,44 @@ router.post('/sendPost', auth, async (req, res, next) => {
 
 });
 
-router.post('/sendTest', auth, multer, async (req, res, next) => {
-    try {
-
-        console.log(req.file);
-
-        res.status(201).json({
-            message: 'Message publié',
-            imageUrl: ''
-        });
-
-    } catch (err) {
-        res.status(400).json({ message: err.original.sqlMessage });
-    }
-
-});
-
 router.delete('/deletePost', auth, async (req, res, next) => {
 
     try {
         if(req.body.userId === req.auth.userId){
+
+            const resToPost = await models.Message.findOne({
+                where: {
+                    ResponseTo: req.body.postId
+                },
+                attributes: ['attachment']
+            });
+            if(resToPost){
+                if(resToPost.attachment){
+                    const stringPath = resToPost.attachment.split('/');
+                    const indexNumber = stringPath.length-1;
+                    fs.unlinkSync(`./images/${stringPath[indexNumber]}`);
+                }
+            }
+
+            const resToResponseToPost = await models.Message.findOne({
+                where: {
+                    id: req.body.postId
+                },
+                attributes: ['attachment']
+            });
+            if(resToResponseToPost){
+                if(resToResponseToPost.attachment){
+                    const stringPath = resToResponseToPost.attachment.split('/');
+                    const indexNumber = stringPath.length-1;
+                    fs.unlinkSync(`./images/${stringPath[indexNumber]}`);
+                }
+            }
+
+
             await models.Message.destroy({
                 where: {ResponseTo: req.body.postId}
             });
+
             await models.Message.destroy({
                 where: {id: req.body.postId}
             });

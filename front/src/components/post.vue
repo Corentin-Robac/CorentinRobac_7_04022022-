@@ -8,7 +8,8 @@
             </div>
             <p @click="updateCurrentPage(post.userName)" class="self-end ml-2 font-bold cursor-pointer">{{post.userName}}</p>
         </div>
-        <p class="text-grisTxt my-2">{{post.userMessageContent}}</p>
+        <p class="text-grisTxt my-2 break-words">{{post.userMessageContent}}</p>
+        <img :src="post.attachment">
         
         <!-- Option message / Cacher si non propriétaire du message -->
         <div v-if="this.post.userName == $store.state.currentUser || $store.state.isAdmin == true" class="flex my-2">
@@ -38,7 +39,8 @@
                     </div>
                     <p class="self-end ml-2 font-bold cursor-pointer" @click="updateCurrentPage(response.userName)">{{response.userName}}</p>
                 </div>
-                <p class="text-grisTxt my-2">{{response.userMessageContent}}</p>
+                <p class="text-grisTxt my-2 break-words">{{response.userMessageContent}}</p>
+                <img :src="response.attachment">
 
                 <!-- Option message / Cacher si non propriétaire du message -->
                 <div class="flex my-2" v-if="response.userName == $store.state.currentUser || $store.state.isAdmin == true"> 

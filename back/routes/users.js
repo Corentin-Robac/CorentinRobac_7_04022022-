@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 var models = require('../models');
 const auth = require('../middleware/auth');
 const MY_SECRET_KEY = process.env.SECRET_KEY;
+const fs = require("fs");
 
 router.post('/subscribe', async (req, res, next) => {
 
@@ -13,23 +14,46 @@ router.post('/subscribe', async (req, res, next) => {
 
         let passwordCrypted = await bcrypt.hash(req.body.password, 10);
 
-        await models.User.create({
-            email: req.body.email,
-            username: req.body.username,
-            password: passwordCrypted,
-            isAdmin: 0
-        });
+        const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const regexPseudo = /^[a-zA-Z0-9]+$/;
+        const regexPassword = /^[A-Za-z0-9]\w{5,}$/;
+        if (req.body.email.match(regexEmail)) {
+            if (req.body.username.match(regexPseudo)) {
+                if (req.body.password.match(regexPassword)) {
 
-        res.status(201).json({
-            message: 'Utilisateur créé',
-            name: req.body.username,
-            token: jwt.sign(
-                {userId: req.body.username},
-                MY_SECRET_KEY,
-                {expiresIn: '24h'}
-            )
-        });
-    
+                    await models.User.create({
+                        email: req.body.email,
+                        username: req.body.username,
+                        password: passwordCrypted,
+                        isAdmin: 0
+                    });
+
+                    res.status(201).json({
+                        message: 'Utilisateur créé',
+                        name: req.body.username,
+                        token: jwt.sign(
+                            {userId: req.body.username},
+                            MY_SECRET_KEY,
+                            {expiresIn: '24h'}
+                        )
+                    });
+
+                } else {
+                    res.status(400).json({
+                        message: 'Veuillez entrer un mot de passe valide(6 caractères minimum).'
+                    });
+                }
+            } else {
+                res.status(400).json({
+                    message: 'Veuillez entrer un pseudo valide.'
+                });
+            }
+
+        } else {
+            res.status(400).json({
+                message: 'Champs email non valide.'
+            });
+        }
 
     } catch (err) {
 
@@ -106,6 +130,7 @@ router.delete('/deleteUser', auth, async (req, res, next) => {
             });
 
             for(const post of postsFromUser){
+
                 let ResponsesToPost = await models.Message.findAll({
                     where: {ResponseTo: post.id},
                     attributes: ['id']
@@ -116,12 +141,53 @@ router.delete('/deleteUser', auth, async (req, res, next) => {
                 }
 
                 idPostsToDelete.push(post.id);
+
             }
 
             if(idPostsToDelete.length != 0){
+
+                // Tous les attachments à supprimer
+                let attachments = [];
+
+                // Tous les posts à supprimer
+                for(const postId of idPostsToDelete){
+                    let responsePost = await models.Message.findOne({
+                        where: {id: postId},
+                        attributes: ['attachment']
+                    })
+
+                    if(attachments.indexOf(responsePost.attachment) === -1) {
+                        attachments.push(responsePost.attachment);
+                    }
+
+                    // Tous les commentaires à supprimer
+                    let responseCommentaires = await models.Message.findAll({
+                        where: {ResponseTo: postId},
+                        attributes: ['attachment']
+                    })
+
+                    if(responseCommentaires.attachment){
+                        // Un commentaire à supprimer
+                        for(const responseCommentaire of responseCommentaires.attachment){
+                            if(attachments.indexOf(responseCommentaire) === -1) {
+                                attachments.push(responseCommentaire);
+                            }
+                        }
+                    }
+
+                }
+
+                // Supprimer les images liées aux messages
+                for(const attachment of attachments){
+                    if(attachment){
+                        fs.unlinkSync(`./images/${attachment.split('/')[attachment.split('/').length-1]}`);
+                    }
+                }
+
                 await models.Message.destroy({
                     where: {id: idPostsToDelete}
                 });
+
             }
 
             await models.User.destroy({

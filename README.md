@@ -22,3 +22,7 @@ nodemon server
 ## Database
 Contact me to get database.
 Use 3306 Port.
+Configure /back/config/config.json with your database ids.
+
+## .env file
+Contact me to get .env file, then put it in /back
